@@ -41,9 +41,9 @@ impl<T> Arr<T> {
     }
 
 
-    /// Insert a new element into the array.
+    /// Insert a new element at the end of our array.
     pub fn insert(&mut self, value: T) {
-        if self.len >= self.size{
+        if self.len >= self.size {
             println!("Array size exceeded.");
             return;
         }
@@ -54,6 +54,73 @@ impl<T> Arr<T> {
         }
 
         self.len += 1;
+    }
+
+
+    /// Remove element at the end of our array.
+    pub fn remove(&mut self) {
+        if self.len == 0 {
+            println!("Array is empty.");
+            return;
+        }
+
+        // drop element
+        unsafe {
+            ptr::drop_in_place(self.ptr.add(self.len - 1));
+        }
+
+        self.len -= 1;
+    }
+
+
+
+    /// Insert element at the middle and shift elements accordingly.
+    pub fn insert_mid(&mut self, value: T) {
+        if self.len >= self.size {
+            println!("Array size exceeded.");
+            return;
+        }
+
+        let mid = self.len / 2;
+
+        unsafe {
+            // shift elements to the right
+            for i in (mid..self.len).rev() {
+                let grab_source = self.ptr.add(i);
+                let grab_shift = self.ptr.add(i + 1);
+                ptr::copy_nonoverlapping(grab_source, grab_shift, 1);
+            }
+
+            // insert new element
+            ptr::write(self.ptr.add(mid), value);
+        }
+
+        self.len += 1;
+    }
+
+
+    /// Remove element at the middle and shift elements accordingly.
+    pub fn remove_mid(&mut self) {
+        if self.len == 0 {
+            println!("Array is empty.");
+            return;
+        }
+
+        let mid = self.len / 2;
+
+        unsafe {
+            // remove old element
+            ptr::drop_in_place(self.ptr.add(mid));
+
+            // shift elements to the left
+            for i in mid..(self.len - 1) {
+                let grab_source = self.ptr.add(i + 1);
+                let grab_shift = self.ptr.add(i);
+                ptr::copy_nonoverlapping(grab_source, grab_shift, 1);
+            }
+        }
+
+        self.len -= 1;
     }
 
 
