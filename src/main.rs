@@ -19,15 +19,33 @@ fn arr_test() {
     }
 }
 
+fn dict_test() {
+
+    let mut dict: Dict<&str, i32> = Dict::new(100);
+    dict.insert("0001", 4);
+    dict.insert("0010", 5);
+    dict.insert("0100", 6);
+    let keys = ["0001", "0010", "0100"];
+
+    for i in 0..dict.len() {
+        let key = keys[i];
+        if let Some(value) = dict.get(key) {
+            println!("key: {}, value: {}", key, value);
+        }
+    }
+
+    dict.remove("0001");
+
+    println!("{:?}", dict.get("0100"));
+    println!("{:?}", dict.get("0001"));
+    println!("{}", dict.len());
+}
 
 
 
 fn main() {
     arr_test();
+    println!("");
+    dict_test();
 
-    let mut dict: Dict<&str, i32> = Dict::new(100);
-
-    dict.insert("cool", 32);
-    println!("{:?}", dict.get("cool"));
-    println!("{}", dict.len());
 }
